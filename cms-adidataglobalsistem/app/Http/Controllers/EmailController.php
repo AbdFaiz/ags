@@ -183,20 +183,17 @@ class EmailController extends Controller
 
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 15);
+        $perPage = $request->input('per_page', 25); // Default 25
         $search = $request->input('search', '');
         $sortField = $request->input('sort_field', 'created_at');
         $sortDirection = $request->input('sort_direction', 'desc');
         
-        // Parameter Filter
         $currentFolder = strtoupper($request->input('folder', 'INBOX'));
         $showFlaggedOnly = $request->boolean('flagged', false);
         $currentLabel = $request->input('label');
 
-        // Ambil query dasar (pastiin fungsi getBaseQuery lu udah handle folder & search)
         $query = $this->getBaseQuery($currentFolder, $search, $sortField, $sortDirection);
 
-        // Logic Judul & Filter Tambahan
         if ($showFlaggedOnly) {
             $query->where('is_flagged', true);
             $folderTitle = "Starred";

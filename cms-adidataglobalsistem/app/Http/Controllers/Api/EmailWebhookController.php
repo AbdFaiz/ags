@@ -14,8 +14,16 @@ class EmailWebhookController extends Controller
     {
         $raw = $request->input('raw_body');
 
-        // 1. Filter MAILER-DAEMON (Email Sistem/Bounce)
-        // Kita cek baris Envelope (tanpa titik dua) dan Header (dengan titik dua)
+        // VALIDASI EMAIL KOSONG
+        if (empty($raw) || strlen(trim($raw)) < 10) {
+            Log::warning('Email kosong atau terlalu pendek', ['length' => strlen($raw ?? '')]);
+            return response()->json([
+                'status' => 'rejected',
+                'reason' => 'Empty or invalid email'
+            ], 400);
+        }
+
+        // 1. Filter MAILER-DAEMON
         if (
             stripos($raw, 'From MAILER-DAEMON') !== false || 
             stripos($raw, 'From: MAILER-DAEMON') !== false || 
@@ -26,19 +34,28 @@ class EmailWebhookController extends Controller
             return response()->json(['status' => 'ignored_system_mail']);
         }
 
-        Log::info('Webhook Email Masuk!', ['data' => substr($raw, 0, 100)]);
-
-        // 2. Ekstrak Header menggunakan Regex yang lebih aman
-        
-        // Ambil From: "Nama" <email@palsu.com> -> kita mau emailnya saja
+        // 2. Ekstrak From
         if (preg_match('/From:.*<(.+?)>/i', $raw, $mFromEmail)) {
             $from = $mFromEmail[1];
         } else {
             preg_match('/From: (.*)/i', $raw, $mFrom);
-            $from = trim($mFrom[1] ?? 'unknown');
+            $from = trim($mFrom[1] ?? '');
         }
 
-        // Ambil To:
+        // 3. Ekstrak Subject
+        preg_match('/Subject: (.*)/i', $raw, $mSub);
+        $subject = trim($mSub[1] ?? 'No Subject');
+
+        // VALIDASI FROM EMAIL (subject ga perlu divalidasi email)
+        if (empty($from) || !filter_var($from, FILTER_VALIDATE_EMAIL)) {
+            Log::warning('Invalid From email', ['from' => $from]);
+            return response()->json([
+                'status' => 'rejected',
+                'reason' => 'Invalid sender email'
+            ], 400);
+        }
+
+        // 4. Ekstrak To
         if (preg_match('/To:.*<(.+?)>/i', $raw, $mToEmail)) {
             $to = $mToEmail[1];
         } else {
@@ -46,16 +63,17 @@ class EmailWebhookController extends Controller
             $to = trim($mTo[1] ?? 'fz@localhost');
         }
 
-        // Ambil Subject:
-        preg_match('/Subject: (.*)/i', $raw, $mSub);
-        $subject = trim($mSub[1] ?? 'No Subject');
-        
-        // 3. Ambil Body (Cari baris kosong pertama sebagai pemisah header dan body)
-        // Kita gunakan \r?\n untuk mendukung berbagai format line ending
+        // 5. Ambil Body
         $parts = preg_split("/(\r?\n)\s*(\r?\n)/", $raw, 2);
         $body = isset($parts[1]) ? trim($parts[1]) : 'No Body Content';
 
-        // 4. Simpan ke Database
+        Log::info('Processing email', [
+            'from' => $from,
+            'to' => $to,
+            'subject' => substr($subject, 0, 50)
+        ]);
+
+        // 6. Simpan ke Database
         $email = Email::create([
             'ticket_number' => 'TIC-' . strtoupper(bin2hex(random_bytes(3))),
             'from_email'    => $from,
@@ -67,7 +85,7 @@ class EmailWebhookController extends Controller
             'folder'        => 'INBOX',
         ]);
 
-        // 5. Broadcast ke Frontend (Pusher/Reverb)
+        // 7. Broadcast ke Frontend
         try {
             broadcast(new NewEmailReceived($email))->toOthers();
         } catch (\Exception $e) {

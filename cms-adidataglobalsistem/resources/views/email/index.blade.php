@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
     @include('partials.alert')
 
@@ -8,7 +7,6 @@
             <a href="{{ route('email.compose') }}" class="btn btn-primary shadow-sm">
                 <i class="fas fa-plus me-2"></i> Compose
             </a>
-            {{-- Menampilkan indikator jika sedang di filter Label atau Starred --}}
             @if(request('flagged'))
                 <span class="badge bg-warning text-dark ms-2 p-2"><i class="fas fa-star me-1"></i> Starred</span>
             @elseif(request('label'))
@@ -64,35 +62,23 @@
 
     {{-- Filter Search & Sorting --}}
     <div class="card card-body border-0 shadow-sm mb-4">
-        <form method="GET" action="{{ route('email.index') }}" class="row g-3">
+        <form method="GET" action="{{ route('email.index') }}" class="row g-3" id="filterForm">
             <input type="hidden" name="folder" value="{{ $currentFolder }}">
             @if(request('label')) <input type="hidden" name="label" value="{{ request('label') }}"> @endif
             @if(request('flagged')) <input type="hidden" name="flagged" value="1"> @endif
             
-            <div class="col-md-5">
+            <div class="col-md-9">
                 <div class="input-group">
                     <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
                     <input type="text" name="search" class="form-control border-start-0" placeholder="Search in {{ $folderTitle }}..." value="{{ $search }}">
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <select name="per_page" class="form-select" onchange="this.form.submit()">
-                    @foreach ([10, 25, 50] as $opt)
-                        <option value="{{ $opt }}" {{ $perPage == $opt ? 'selected' : '' }}>{{ $opt }} Rows</option>
-                    @endforeach
+                    <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25 Rows</option>
+                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50 Rows</option>
+                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100 Rows</option>
                 </select>
-            </div>
-            <div class="col-md-5">
-                <div class="input-group">
-                    <select name="sort_field" class="form-select" onchange="this.form.submit()">
-                        <option value="created_at" {{ $sortField === 'created_at' ? 'selected' : '' }}>Date</option>
-                        <option value="subject" {{ $sortField === 'subject' ? 'selected' : '' }}>Subject</option>
-                    </select>
-                    <select name="sort_direction" class="form-select" onchange="this.form.submit()">
-                        <option value="desc" {{ $sortDirection === 'desc' ? 'selected' : '' }}>Newest</option>
-                        <option value="asc" {{ $sortDirection === 'asc' ? 'selected' : '' }}>Oldest</option>
-                    </select>
-                </div>
             </div>
         </form>
     </div>
@@ -108,10 +94,27 @@
                     <thead class="bg-light">
                         <tr>
                             <th width="40"><input type="checkbox" id="selectAll" class="form-check-input"></th>
-                            <th width="40"></th> {{-- Kolom Star --}}
-                            <th>Sender</th>
-                            <th>Subject & Label</th>
-                            <th width="150">Date</th>
+                            <th width="40"></th>
+                            <th>
+                                <a href="{{ route('email.index', array_merge(request()->query(), ['sort_field' => 'from_email', 'sort_direction' => $sortField == 'from_email' && $sortDirection == 'asc' ? 'desc' : 'asc'])) }}" class="text-dark text-decoration-none">
+                                    Sender 
+                                    @if($sortField == 'from_email')
+                                        <i class="fas fa-sort-{{ $sortDirection == 'asc' ? 'up' : 'down' }}"></i>
+                                    @endif
+                                </a>
+                            </th>
+                            <th>
+                                <a href="{{ route('email.index', array_merge(request()->query(), ['sort_field' => 'subject', 'sort_direction' => $sortField == 'subject' && $sortDirection == 'asc' ? 'desc' : 'asc'])) }}" class="text-dark text-decoration-none">
+                                    Subject & Label
+                                        <i class="fas fa-sort-{{ $sortDirection == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
+                            <th width="150">
+                                <a href="{{ route('email.index', array_merge(request()->query(), ['sort_field' => 'created_at', 'sort_direction' => $sortField == 'created_at' && $sortDirection == 'asc' ? 'desc' : 'asc'])) }}" class="text-dark text-decoration-none">
+                                    Date
+                                        <i class="fas fa-sort-{{ $sortDirection == 'asc' ? 'up' : 'down' }}"></i>
+                                </a>
+                            </th>
                             <th width="50" class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -122,7 +125,6 @@
                                     <input type="checkbox" name="selected_emails[]" value="{{ $email->id }}" class="form-check-input email-checkbox">
                                 </td>
                                 <td>
-                                    {{-- Fitur Star/Flagged --}}
                                     <a href="javascript:void(0)" 
                                        class="toggle-star" 
                                        data-id="{{ $email->id }}" 
@@ -145,14 +147,12 @@
                                         <span class="d-block">{{ $email->subject }}</span>
                                     </a>
                                     <div class="d-flex align-items-center gap-2 mt-1">
-                                        {{-- Tombol Edit Label (Dropdown) --}}
                                         <div class="dropdown">
                                             <button class="btn btn-xs btn-outline-secondary py-0 px-1 shadow-none" data-bs-toggle="dropdown" style="font-size: 10px;">
                                                 <i class="fas fa-tag"></i> {{ $email->label ?? 'Add Label' }}
                                             </button>
                                             <ul class="dropdown-menu shadow-sm">
                                                 <li><h6 class="dropdown-header">Select Label</h6></li>
-                                                {{-- Daftar Label yang sudah pernah dibuat --}}
                                                 @foreach($availableLabels as $label)
                                                     <li>
                                                         <form action="{{ route('email.updateLabel', $email->id) }}" method="POST">
@@ -164,10 +164,7 @@
                                                         </form>
                                                     </li>
                                                 @endforeach
-                                                
                                                 <li><hr class="dropdown-divider"></li>
-                                                
-                                                {{-- Input Label Baru --}}
                                                 <li>
                                                     <form action="{{ route('email.updateLabel', $email->id) }}" method="POST" class="px-3 py-1">
                                                         @csrf
@@ -177,8 +174,6 @@
                                                         </div>
                                                     </form>
                                                 </li>
-
-                                                {{-- Hapus Label --}}
                                                 @if($email->label)
                                                 <li>
                                                     <form action="{{ route('email.updateLabel', $email->id) }}" method="POST">
@@ -190,11 +185,10 @@
                                                 @endif
                                             </ul>
                                         </div>
-                                        
                                         <small class="text-muted">{{ Str::limit(strip_tags($email->body), 50) }}</small>
                                     </div>
                                 </td>
-                                <td class="text-muted small">{{ $email->created_at->diffForHumans() }}</td>
+                                <td class="text-muted small">{{ $email->created_at->format('d M Y H:i') }}</td>
                                 <td class="text-center">
                                     <div class="dropdown">
                                         <a href="#" class="text-muted p-2" data-bs-toggle="dropdown" aria-expanded="false">
@@ -222,7 +216,10 @@
                                                     </form>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item small" href="#"><i class="fas fa-envelope-open me-2"></i> Mark as Read</a>
+                                                    <form action="{{ route('emails.mark-read', $email->id) }}" method="POST">
+                                                        @csrf
+                                                        <button class="dropdown-item small"><i class="fas fa-envelope-open me-2"></i> Mark as Read</button>
+                                                    </form>
                                                 </li>
                                             @endif
                                         </ul>
@@ -231,7 +228,7 @@
                             </tr>
                         @empty
                             <tr id="emptyMessageRow">
-                                <td colspan="5" class="text-center py-5 text-muted">
+                                <td colspan="6" class="text-center py-5 text-muted">
                                     <i class="fas fa-envelope-open fa-3x mb-3 opacity-20"></i>
                                     <p>No emails in {{ $folderTitle }}</p>
                                 </td>
@@ -245,122 +242,151 @@
         @if ($emails->hasPages())
             <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center">
                 <small>Showing {{ $emails->firstItem() }}-{{ $emails->lastItem() }} of {{ $emails->total() }}</small>
-                {{ $emails->appends(request()->query())->links() }}
+                <div>
+                    {{ $emails->appends(request()->query())->links() }}
+                </div>
             </div>
         @endif
     </div>
+@endsection
 
-    <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var pusher = new Pusher('6e13e94b7c48cde27be4', { cluster: 'ap1', forceTLS: true });
-            var channel = pusher.subscribe('emails');
+@push('scripts')
+<script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inisialisasi Pusher hanya sekali
+    if (typeof window.pusherInitialized === 'undefined') {
+        window.pusherInitialized = true;
+        
+        var pusher = new Pusher('6e13e94b7c48cde27be4', { cluster: 'ap1', forceTLS: true });
+        var channel = pusher.subscribe('emails');
 
-            channel.bind('new.email', function(data) {
-                // Hanya tampilkan jika kita di folder INBOX
-                if ('{{ $currentFolder }}' !== 'INBOX') return;
-                
-                if (document.querySelector(`tr[data-email-id="${data.id}"]`)) return;
+        channel.bind('new.email', function(data) {
+            if ('{{ $currentFolder }}' !== 'INBOX') return;
+            
+            if (document.querySelector(`tr[data-email-id="${data.id}"]`)) return;
 
-                const tbody = document.getElementById('emailTableBody');
-                const emptyRow = document.getElementById('emptyMessageRow');
-                if (emptyRow) emptyRow.remove();
+            const tbody = document.getElementById('emailTableBody');
+            const emptyRow = document.getElementById('emptyMessageRow');
+            if (emptyRow) emptyRow.remove();
 
-                const newRow = `
-                    <tr class="fw-bold" data-email-id="${data.id}" style="background-color: #f8faff;">
-                        <td><input type="checkbox" name="selected_emails[]" value="${data.id}" class="form-check-input email-checkbox"></td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <span class="text-primary me-2"><i class="fas fa-circle" style="font-size: 8px;"></i></span>
-                                <div class="avatar-xs bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size: 12px;">
-                                    ${data.from.charAt(0).toUpperCase()}
-                                </div>
-                                <a href="/emails/${data.ticket_number}" class="text-dark text-decoration-none">${data.from}</a>
+            const newRow = `
+                <tr class="fw-bold" data-email-id="${data.id}" style="background-color: #f8faff;">
+                    <td><input type="checkbox" name="selected_emails[]" value="${data.id}" class="form-check-input email-checkbox"></td>
+                    <td>
+                        <a href="javascript:void(0)" class="toggle-star" data-id="${data.id}" style="text-decoration: none;">
+                            <i class="star-icon-${data.id} far fa-star text-muted"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-xs bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center" style="width:30px; height:30px; font-size: 12px;">
+                                ${data.from.charAt(0).toUpperCase()}
                             </div>
-                        </td>
-                        <td>
-                            <a href="/emails/${data.ticket_number}" class="text-dark text-decoration-none">
-                                <span class="d-block">${data.subject}</span>
-                                <small class="text-muted">${data.preview}</small>
+                            <a href="/emails/${data.ticket_number}" class="text-dark text-decoration-none">${data.from}</a>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="/emails/${data.ticket_number}" class="text-dark text-decoration-none">
+                            <span class="d-block">${data.subject}</span>
+                            <small class="text-muted">${data.preview}</small>
+                        </a>
+                    </td>
+                    <td class="text-muted small">Just now</td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <a href="#" class="text-muted p-2" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
                             </a>
-                        </td>
-                        <td class="text-muted small">Just now</td>
-                    </tr>
-                `;
-                tbody.insertAdjacentHTML('afterbegin', newRow);
-            });
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                <li>
+                                    <form action="/emails/${data.id}/trash" method="POST">
+                                        @csrf
+                                        <button class="dropdown-item small"><i class="fas fa-trash me-2"></i> Move to Trash</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form action="/emails/${data.id}/read" method="POST">
+                                        @csrf
+                                        <button class="dropdown-item small"><i class="fas fa-envelope-open me-2"></i> Mark as Read</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            tbody.insertAdjacentHTML('afterbegin', newRow);
+        });
+    }
 
-            // Checkbox Logic
-            document.getElementById('selectAll').addEventListener('change', function() {
-                document.querySelectorAll('.email-checkbox').forEach(cb => cb.checked = this.checked);
-                toggleButtons();
-            });
+    // Checkbox Logic
+    document.getElementById('selectAll').addEventListener('change', function() {
+        document.querySelectorAll('.email-checkbox').forEach(cb => cb.checked = this.checked);
+        toggleButtons();
+    });
 
-            document.addEventListener('change', (e) => {
-                if (e.target.classList.contains('email-checkbox')) toggleButtons();
-            });
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('email-checkbox')) toggleButtons();
+    });
 
-            function toggleButtons() {
-                const count = document.querySelectorAll('.email-checkbox:checked').length;
-                document.querySelectorAll('#bulkActions button').forEach(btn => btn.disabled = count === 0);
-            }
+    function toggleButtons() {
+        const count = document.querySelectorAll('.email-checkbox:checked').length;
+        document.querySelectorAll('#bulkActions button').forEach(btn => btn.disabled = count === 0);
+    }
 
-            document.querySelectorAll('#bulkActions button').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.getElementById('bulkAction').value = this.dataset.action;
-                    document.getElementById('bulkActionForm').submit();
-                });
-            });
-
-            // Form untuk toggledStar 
-            document.addEventListener('click', function(e) {
-            // Cek apakah yang diklik itu icon bintang atau link bintang
-            if (e.target.classList.contains('toggle-star') || e.target.closest('.toggle-star')) {
-                const anchor = e.target.closest('.toggle-star');
-                const emailId = anchor.getAttribute('data-id');
-                const icon = document.querySelector('.star-icon-' + emailId);
-
-                // Langsung ubah UI (Optimistic Update)
-                if (icon.classList.contains('fas')) {
-                    icon.classList.replace('fas', 'far');
-                    icon.classList.replace('text-warning', 'text-muted');
-                } else {
-                    icon.classList.replace('far', 'fas');
-                    icon.classList.replace('text-muted', 'text-warning');
-                }
-
-                // Kirim ke server di background
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-                const url = "{{ route('email.toggleStar', ':id') }}".replace(':id', emailId);
-
-                fetch(url, { // Pakai backticks (`) biar rapi
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                }).then(async response => {
-                    const data = await response.json();
-                    if (!response.ok || !data.success) {
-                        throw new Error(data.message || 'Server Error');
-                    }
-                    console.log('Status bintang:', data.is_flagged);
-                }).catch(err => {
-                    console.error('Error:', err);
-                    alert('Gagal update bintang: ' + err.message);
-                    // Balikin icon ke kondisi semula kalau gagal
-                    if (icon.classList.contains('fas')) {
-                        icon.classList.replace('fas', 'far');
-                        icon.classList.replace('text-warning', 'text-muted');
-                    } else {
-                        icon.classList.replace('far', 'fas');
-                        icon.classList.replace('text-muted', 'text-warning');
-                    }
-                });
-            }
+    document.querySelectorAll('#bulkActions button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.getElementById('bulkAction').value = this.dataset.action;
+            document.getElementById('bulkActionForm').submit();
         });
     });
+
+    // Toggle Star
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('toggle-star') || e.target.closest('.toggle-star')) {
+            e.preventDefault();
+            const anchor = e.target.closest('.toggle-star');
+            const emailId = anchor.getAttribute('data-id');
+            const icon = document.querySelector('.star-icon-' + emailId);
+
+            const wasFas = icon.classList.contains('fas');
+            
+            if (wasFas) {
+                icon.classList.replace('fas', 'far');
+                icon.classList.replace('text-warning', 'text-muted');
+            } else {
+                icon.classList.replace('far', 'fas');
+                icon.classList.replace('text-muted', 'text-warning');
+            }
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const url = "{{ route('email.toggleStar', ':id') }}".replace(':id', emailId);
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }).then(async response => {
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Server Error');
+                }
+            }).catch(err => {
+                console.error('Error:', err);
+                if (wasFas) {
+                    icon.classList.replace('far', 'fas');
+                    icon.classList.replace('text-muted', 'text-warning');
+                } else {
+                    icon.classList.replace('fas', 'far');
+                    icon.classList.replace('text-warning', 'text-muted');
+                }
+            });
+        }
+    });
+});
 </script>
-@endsection
+@endpush
