@@ -1,0 +1,326 @@
+@font-face {
+    font-family: "American-Captain";
+    src: url("../fonts/american-captain/AmericanCaptain-MdEY.otf")
+        format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    /* Base Colors */
+    --dark: #0d1117;
+    --darker: #0a0a0a;
+    --darker-bg: #010409;
+    --card-bg: #161b22;
+    --odd-bg: rgba(34, 67, 105, 0.5);
+    --even-bg: rgba(61, 121, 189, 0.5);
+    /* Text Colors */
+    --text-light: #f0f6fc;
+    --text-muted: #8b949e;
+    --light: #ffffff;
+    --light-90: rgba(255, 255, 255, 0.9);
+    --light-80: rgba(255, 255, 255, 0.8);
+    --light-60: rgba(255, 255, 255, 0.6);
+    --light-40: rgba(255, 255, 255, 0.4);
+    --light-20: rgba(255, 255, 255, 0.2);
+    /* Accent Colors */
+    --primary: #1e90ff;
+    --primary-accent: #58a6ff;
+    --primary-dark: #d62e3d;
+    --primary-light: rgba(255, 62, 77, 0.1);
+    --secondary: #1a73e8;
+    --secondary-accent: #1f6feb;
+    --highlight: #ff6b00;
+    /* UI Elements */
+    --border-color: #30363d;
+    --highlight-bg: rgba(88, 166, 255, 0.15);
+    /* Effects */
+    --glow: 0 0 15px rgba(88, 166, 255, 0.3);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.16);
+    /* Transitions */
+    --transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    --transition-duration: 0.4s;
+}
+
+body {
+    background: linear-gradient(to bottom, var(--darker), var(--dark));
+    color: var(--text-light);
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+/* Navbar Fixed dengan Rounded Container */
+
+.navbar-container {
+    position: fixed;
+    top: 20px;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    padding: 0 2.5%;
+}
+
+/* Elegant Dark Navbar */
+
+.navbar {
+    background-color: rgba(0, 16, 33, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 4px 20px rgba(1, 4, 9, 0.5);
+    border-bottom: 1px solid var(--border-color);
+    margin: 0 auto 2.5rem;
+    z-index: 1000;
+    transition: var(--transition);
+    border-radius: 20rem;
+}
+
+/* Brand Logo */
+
+.navbar-brand {
+    font-family: "American-Captain", sans-serif;
+    font-size: 1.7rem;
+    color: var(--text-light) !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-right: 3rem;
+    transition: var(--transition);
+    position: relative;
+    padding: 0.4rem 0;
+}
+
+.navbar-brand .gs {
+    font-size: 0.75rem;
+}
+
+.navbar-brand .img-fluid {
+    height: 5rem;
+    -webkit-filter: grayscale(1);
+    filter: grayscale(1);
+    transition: var(--transition);
+}
+
+.navbar-brand::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-accent), transparent);
+    transition: var(--transition);
+}
+
+.navbar-brand:hover {
+    color: var(--primary-accent) !important;
+}
+
+.navbar-brand:hover .img-fluid {
+    -webkit-filter: grayscale(0);
+    filter: grayscale(0);
+}
+
+.navbar-brand:hover::after {
+    width: 100%;
+}
+
+/* Navigation Links */
+
+.nav-link {
+    color: var(--text-light) !important;
+    font-weight: 600;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 0.85rem 1.5rem !important;
+    position: relative;
+    transition: var(--transition);
+}
+
+.nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: var(--primary-accent);
+    transition: var(--transition);
+}
+
+/* Navigation Links */
+
+.nav-link {
+    color: var(--text-light) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 0 0.25rem;
+    padding: 0.85rem 1.5rem !important;
+    position: relative;
+    border-radius: 10rem;
+    transition: var(--transition);
+}
+
+.nav-link:hover,
+.nav-link:focus {
+    color: var(--primary-accent) !important;
+}
+
+.nav-link.active {
+    color: var(--primary-accent) !important;
+}
+
+/* Underline Animation */
+
+.nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 0.1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: var(--primary-accent);
+    transition: var(--transition);
+    border-radius: 2px;
+}
+
+.nav-link:hover::after {
+    width: 30%;
+}
+
+.nav-link.active::after {
+    width: 30%;
+}
+
+/* Get Started Button */
+
+.get-started {
+    font-weight: 700;
+    color: var(--text-light) !important;
+    background: linear-gradient(
+        135deg,
+        rgba(50, 60, 140, 0.9),
+        rgba(80, 50, 120, 0.9)
+    );
+    border: 1px solid rgba(120, 90, 180, 0.4);
+    border-radius: 18rem;
+    padding: 0.85rem 2rem !important;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--glow);
+    letter-spacing: 1px;
+}
+
+.get-started:hover {
+    transform: scale(1.01);
+    box-shadow: 0 8px 20px rgba(31, 111, 235, 0.4);
+}
+
+/* Simple Footer Styles */
+.footer-section {
+    background: var(--darker);
+    color: var(--text-light);
+    padding: 3rem 0 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.footer-simple {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.footer-brand a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    text-decoration: none;
+    font-family: "American-Captain", sans-serif;
+    font-size: 1.5rem;
+}
+
+.footer-logo {
+    height: 3rem;
+}
+
+.social-links {
+    gap: 1rem;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-light);
+    transition: var(--transition);
+}
+
+.social-links a:hover {
+    background: var(--primary);
+}
+
+.footer-copyright {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    width: 100%;
+}
+
+/* Mobile Menu Styles */
+@media (max-width: 991.98px) {
+    /* Navbar Fixed dengan Rounded Container */
+    .navbar-container {
+        top: 0;
+        padding: 0;
+    }
+
+    .navbar {
+        border-radius: 8px;
+        width: 100%;
+        padding: 0.75rem 1rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.4rem;
+    }
+
+    .navbar-brand .img-fluid {
+        height: 3rem;
+        -webkit-filter: grayscale(0);
+        filter: grayscale(0);
+    }
+
+    /* Mobile - Only Get Started Button */
+    .d-lg-none .get-started {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem !important;
+    }
+
+    .footer-section {
+        padding: 2rem 0 1rem;
+    }
+
+    .footer-brand a {
+        font-size: 1.3rem;
+    }
+
+    .footer-logo {
+        height: 2.5rem;
+    }
+}

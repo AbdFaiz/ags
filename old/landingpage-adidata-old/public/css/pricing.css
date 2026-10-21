@@ -1,0 +1,381 @@
+/* Optimized Pricing Page Styles */
+:root {
+    /* Base Colors */
+    --dark: #0d1117;
+    --darker: #0a0a0a;
+    --darker-bg: #010409;
+    --card-bg: #161b22;
+    --odd-bg: rgba(34, 67, 105, 0.5);
+    --even-bg: rgba(61, 121, 189, 0.5);
+    /* Text Colors */
+    --text-light: #f0f6fc;
+    --text-muted: #8b949e;
+    --light: #FFFFFF;
+    --light-90: rgba(255, 255, 255, 0.9);
+    --light-80: rgba(255, 255, 255, 0.8);
+    --light-60: rgba(255, 255, 255, 0.6);
+    --light-40: rgba(255, 255, 255, 0.4);
+    --light-20: rgba(255, 255, 255, 0.2);
+    /* Accent Colors */
+    --primary: #1e90ff;
+    --primary-accent: #58a6ff;
+    --primary-dark: #D62E3D;
+    --primary-light: rgba(255, 62, 77, 0.1);
+    --secondary: #1A73E8;
+    --secondary-accent: #1f6feb;
+    --highlight: #ff6b00;
+    /* UI Elements */
+    --border-color: #30363d;
+    --highlight-bg: rgba(88, 166, 255, 0.15);
+    /* Effects */
+    --glow: 0 0 15px rgba(88, 166, 255, 0.3);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.16);
+    /* Transitions */
+    --transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    --transition-duration: 0.4s;
+}
+
+.pricing-hero {
+    background: radial-gradient(ellipse at 20% 30%, rgba(30, 144, 255, 0.1) 0%, transparent 50%), 
+                radial-gradient(ellipse at 80% 70%, rgba(255, 107, 0, 0.1) 0%, transparent 50%), 
+                linear-gradient(to bottom, var(--darker), var(--dark));
+    padding: 10rem 0;
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    contain: layout paint;
+}
+
+.blur-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    z-index: 0;
+    will-change: transform, filter;
+    pointer-events: none;
+}
+
+.blur-circle[data-aos] {
+    opacity: 0.15 !important;
+    transition-property: transform, filter;
+}
+
+.blur-circle[data-aos].aos-animate {
+    opacity: 0.15 !important;
+}
+
+.circle-1 {
+    width: 500px;
+    height: 500px;
+    background: var(--highlight);
+    top: 20%;
+    left: 10%;
+}
+
+.circle-2 {
+    width: 700px;
+    height: 700px;
+    background: var(--secondary);
+    top: -15%;
+    right: -5%;
+}
+
+.circle-3 {
+    width: 400px;
+    height: 400px;
+    background: var(--secondary);
+    bottom: 10%;
+    right: 15%;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+    contain: layout;
+}
+
+.section-title .subtitle {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--highlight);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    will-change: transform;
+}
+
+.section-title h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--light);
+    margin-bottom: 1.5rem;
+    text-shadow: var(--glow);
+    will-change: transform;
+}
+
+.section-title p {
+    font-size: 1.125rem;
+    color: var(--light-80);
+    max-width: 700px;
+    margin: 0 auto;
+    will-change: transform;
+}
+
+/* Optimized Pricing Tabs */
+.pricing-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+    contain: layout;
+}
+
+/* Optimized Pricing Cards */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+    position: relative;
+    z-index: 1;
+    contain: layout;
+}
+
+.pricing-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    will-change: transform, box-shadow, border-color;
+    contain: layout;
+}
+
+.pricing-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--highlight), var(--secondary));
+    opacity: 0;
+    z-index: -1;
+    will-change: opacity;
+}
+
+.pricing-card:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(255, 255, 255, 0.2);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.pricing-card:hover::before {
+    opacity: 0.1;
+    transition: opacity 0.3s ease;
+}
+
+.pricing-card.popular {
+    border: 2px solid var(--highlight);
+    box-shadow: var(--glow);
+}
+
+.popular-badge {
+    display: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--highlight);
+    color: var(--light);
+    padding: 0.25rem 1rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: var(--glow);
+    will-change: transform;
+}
+
+.pricing-card.popular .popular-badge {
+    display: block;
+}
+
+.pricing-header {
+    padding: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    contain: layout;
+}
+
+.pricing-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--light);
+    will-change: transform;
+}
+
+.pricing-features {
+    padding: 2rem;
+    contain: layout;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: var(--light-90);
+    will-change: transform;
+}
+
+.feature-item i {
+    margin-right: 0.75rem;
+    color: var(--highlight);
+    will-change: transform;
+}
+
+.feature-item.disabled {
+    color: var(--light-40);
+}
+
+.feature-item.disabled i {
+    color: var(--light-40);
+}
+
+.pricing-footer {
+    padding: 0 2rem 2rem;
+    text-align: center;
+    contain: layout;
+}
+
+.btn-pricing {
+    width: 100%;
+    padding: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    will-change: background, color, box-shadow, border-color;
+}
+
+.btn-outline-danger {
+    background: transparent;
+    border: 2px solid var(--highlight);
+    color: var(--highlight);
+}
+
+.btn-outline-danger:hover {
+    background: var(--highlight);
+    color: var(--light);
+    box-shadow: var(--glow);
+    transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--highlight);
+    color: var(--light);
+    box-shadow: var(--glow);
+}
+
+.btn-primary:hover {
+    background: transparent;
+    border: 2px solid var(--highlight);
+    box-shadow: 0 8px 25px rgba(255, 62, 77, 0.4);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Optimized FAQ Section */
+.faq-section {
+    background: var(--darker);
+    padding: 10rem 0;
+    position: relative;
+    overflow: hidden;
+    contain: layout paint;
+}
+
+.accordion-item {
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    contain: layout;
+}
+
+.accordion-button {
+    font-weight: 600;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: none;
+    color: var(--light);
+    will-change: background, color;
+}
+
+.accordion-button:not(.collapsed) {
+    color: var(--highlight);
+    background: rgba(255, 255, 255, 0.1);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+.accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ff6b00'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    will-change: transform;
+}
+
+.accordion-body {
+    padding: 1.5rem 1.5rem;
+    color: var(--light-80);
+    will-change: transform;
+}
+
+/* Optimized Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .section-title h2, .faq-section h2 {
+        font-size: 2rem;
+    }
+    .pricing-grid {
+        grid-template-columns: 1fr;
+    }
+    .pricing-card.popular {
+        transform: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .section {
+        padding: 4rem 0;
+    }
+    .section-title h2, .faq-section h2 {
+        font-size: 1.8rem;
+    }
+    .pricing-price {
+        font-size: 2.5rem;
+    }
+    .pricing-tabs {
+        flex-direction: column;
+        align-items: center;
+    }
+}

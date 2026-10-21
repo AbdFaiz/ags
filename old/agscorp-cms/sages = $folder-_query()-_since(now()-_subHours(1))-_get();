@@ -1,0 +1,30 @@
+[90m= [39m[34;4mWebklex\PHPIMAP\Client[39;24m {#6504
+    +[1mconnection[22m: [36mnull[39m,
+    +[1mhost[22m: "[32mimap.gmail.com[39m",
+    +[1mport[22m: [35m993[39m,
+    +[1mprotocol[22m: "[32mimap[39m",
+    +[1mencryption[22m: "[32mssl[39m",
+    +[1mvalidate_cert[22m: [36mtrue[39m,
+    +[1mtimeout[22m: [35m30[39m,
+    +[1musername[22m: "[32mabdurrahmanfaiz187@gmail.com[39m",
+    +[1mpassword[22m: "[32mawdm nzjk selj alje[39m",
+    +[1mextensions[22m: [],
+    +[1mrfc[22m: "[32mRFC822[39m",
+    +[1mauthentication[22m: [36mnull[39m,
+  }
+
+[90m= [39m[34;4mWebklex\PHPIMAP\Client[39;24m {#6504
+    +[1mconnection[22m: [36mnull[39m,
+    +[1mhost[22m: "[32mimap.gmail.com[39m",
+    +[1mport[22m: [35m993[39m,
+    +[1mprotocol[22m: "[32mimap[39m",
+    +[1mencryption[22m: "[32mssl[39m",
+    +[1mvalidate_cert[22m: [36mtrue[39m,
+    +[1mtimeout[22m: [35m30[39m,
+    +[1musername[22m: "[32mabdurrahmanfaiz187@gmail.com[39m",
+    +[1mpassword[22m: "[32mawdm nzjk selj alje[39m",
+    +[1mextensions[22m: [],
+    +[1mrfc[22m: "[32mRFC822[39m",
+    +[1mauthentication[22m: [36mnull[39m,
+  }
+
